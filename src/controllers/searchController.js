@@ -3,7 +3,8 @@ const Hotel = require("../models/hotelModel");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // const YOUR_GOOGLE_API_KEY = "AIzaSyBnD7klPbc9ApkZ5_ONxGsvhfZXjmGBbfg";
-const API_KEY = 'AIzaSyAhfXpyDX2sqFWMV1yOsQ8HwZFQf5rV9aA'
+const API_KEY = process.env.GEMINI_KEY
+
 
 function parseToJSON(responseString) {
   try {
