@@ -55,7 +55,9 @@ const searchHotels = async (req, res) => {
     // Construct a query for filtering hotels based on the extracted values
     const filterQuery = {};
 
-    if (city) filterQuery.city = city;
+    if (city) {
+      filterQuery.city = { $regex: city, $options: 'i' };
+    }
     if (price) filterQuery.price = { $lte: price }; // Assuming price in hotels is stored as a number
     if (rating) filterQuery.rating = { $gte: rating }; // Assuming rating is between 1-5
     if (amenities.length > 0) filterQuery.amenities = { $in: amenities };
