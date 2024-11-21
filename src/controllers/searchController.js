@@ -27,7 +27,7 @@ const extractSearchDetails = async (userPrompt) => {
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `Extract the city, price, rating, and amenities from the following text: ${userPrompt}. Output should be a JSON in the format - {"priceOperator": "grater", "price": 100,ratingOperator": "grater", "rating": 5, "amenities": ["WiFi", "Pool", "Restaurant"], "city": "indore"}, if you did not find any key then just show an empty string and in case of amenities an empty array, items in amenities can only contains these items : 'WiFi','Gym','Spa','Parking' 'Restaurant','Bar'. In priceOperator and ratingOperator only 1 out of these 4 values can be returned : 'greater', 'lower', 'equal', ''.`;
+    const prompt = `Extract the city, price, rating, and amenities from the following text: ${userPrompt}. Output should be a JSON in the format - {"priceOperator": "greater", "price": 100,ratingOperator": "greater", "rating": 5, "amenities": ["WiFi", "Pool", "Restaurant"], "city": "indore"}, if you did not find any key then just show an empty string and in case of amenities an empty array, items in amenities can only contains these items : 'WiFi','Gym','Spa','Parking' 'Restaurant','Bar'. In priceOperator and ratingOperator only 1 out of these 4 values can be returned : 'greater', 'lower', 'equal', ''.`;
 
     const result = await model.generateContent(prompt);
     const parsedResult = parseToJSON(result.response.text());
