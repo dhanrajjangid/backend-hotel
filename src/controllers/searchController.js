@@ -47,18 +47,32 @@ const searchHotels = async (req, res) => {
 
   try {
     // Extract details from the prompt using Gemini API
-    const { city, price, rating, amenities, priceOperator, ratingOperator } =
-      await extractSearchDetails(prompt);
+    const extractedDetails = await extractSearchDetails(prompt);
 
-      let amenitiesArr = []
+    // Check if extraction failed
+    if (!extractedDetails) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to extract search details from the prompt.",
+      });
+    }
 
-      if(Array.isArray(amenities)){
-        amenitiesArr = amenities
-      }
+    // Destructure details with default values
+    const {
+      city = "",
+      price = null,
+      rating = null,
+      amenities = [],
+      priceOperator = "",
+      ratingOperator = "",
+    } = extractedDetails;
 
-      if (amenitiesArr.length === 0) {
-        return res.status(200).json({ success: true, data: [] });
-      }
+    let amenitiesArr = Array.isArray(amenities) ? amenities : [];
+
+    // If amenities array is empty, return no results
+    if (amenitiesArr.length === 0 && !price && !rating && !city) {
+      return res.status(200).json({ success: true, data: [] });
+    }
 
     // Construct a query for filtering hotels based on the extracted values
     const filterQuery = {};
@@ -66,7 +80,7 @@ const searchHotels = async (req, res) => {
     if (city) {
       filterQuery.city = { $regex: city, $options: "i" };
     }
-    if (price !== undefined && price !== null) {
+    if (price !== null) {
       switch (priceOperator) {
         case "greater":
           filterQuery.price = { $gt: price };
@@ -83,7 +97,7 @@ const searchHotels = async (req, res) => {
     }
 
     // Filter by rating
-    if (rating !== undefined && rating !== null) {
+    if (rating !== null) {
       switch (ratingOperator) {
         case "greater":
           filterQuery.rating = { $gt: rating };
@@ -99,7 +113,9 @@ const searchHotels = async (req, res) => {
       }
     }
 
-    if (amenitiesArr?.length > 0) filterQuery.amenities = { $in: amenitiesArr };
+    if (amenitiesArr.length > 0) {
+      filterQuery.amenities = { $in: amenitiesArr };
+    }
 
     // Find hotels based on the filter query
     const hotels = await Hotel.find(filterQuery);
