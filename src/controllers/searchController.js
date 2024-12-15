@@ -50,6 +50,12 @@ const searchHotels = async (req, res) => {
     const { city, price, rating, amenities, priceOperator, ratingOperator } =
       await extractSearchDetails(prompt);
 
+      let amenitiesArr = []
+
+      if(Array.isArray(amenities)){
+        amenitiesArr = amenities
+      }
+
     // Construct a query for filtering hotels based on the extracted values
     const filterQuery = {};
 
@@ -89,7 +95,7 @@ const searchHotels = async (req, res) => {
       }
     }
 
-    if (amenities.length > 0) filterQuery.amenities = { $in: amenities };
+    if (amenitiesArr?.length > 0) filterQuery.amenities = { $in: amenitiesArr };
 
     // Find hotels based on the filter query
     const hotels = await Hotel.find(filterQuery);
