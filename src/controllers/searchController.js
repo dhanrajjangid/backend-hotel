@@ -56,6 +56,10 @@ const searchHotels = async (req, res) => {
         amenitiesArr = amenities
       }
 
+      if (amenitiesArr.length === 0) {
+        return res.status(200).json({ success: true, data: [] });
+      }
+
     // Construct a query for filtering hotels based on the extracted values
     const filterQuery = {};
 
