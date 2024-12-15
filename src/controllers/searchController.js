@@ -71,7 +71,9 @@ const searchHotels = async (req, res) => {
 
     // If amenities array is empty, return no results
     if (amenitiesArr.length === 0 && !price && !rating && !city) {
-      return res.status(200).json({ success: true, data: [] });
+      return res.status(200).json({
+        success: true, data: [], message: "No hotels match your search criteria. Please try adjusting your input for better results.",
+      });
     }
 
     // Construct a query for filtering hotels based on the extracted values
@@ -119,6 +121,14 @@ const searchHotels = async (req, res) => {
 
     // Find hotels based on the filter query
     const hotels = await Hotel.find(filterQuery);
+    // Check if no hotels are found
+    if (hotels.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No hotels match your search criteria. Please try adjusting your input for better results.",
+        data: [],
+      });
+    }
     res.status(200).json({ success: true, data: hotels });
   } catch (error) {
     console.error("Error searching hotels:", error);
