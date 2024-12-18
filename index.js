@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const http = require('http');
 const hotelRoutes = require('./src/routes/hotelRoutes');
+const authRoutes = require('./src/routes/authRoutes');
 require("dotenv").config();
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(cors());
 
 // Routes
 app.use('/hotels', hotelRoutes);
+app.use('/auth', authRoutes);
 
 // Start the server
 app.listen(PORT, () => {
